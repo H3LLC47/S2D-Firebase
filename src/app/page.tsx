@@ -47,7 +47,7 @@ export default function S2DDeployPage() {
         </div>
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground border-t">
-        S2D Deploy &copy; {new Date().getFullYear()}
+        VulcanComputer Systems &copy; {new Date().getFullYear()}
       </footer>
     </div>
   );
