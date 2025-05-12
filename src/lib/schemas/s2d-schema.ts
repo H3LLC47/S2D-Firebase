@@ -14,12 +14,13 @@ export const S2DConfigSchema = z.object({
   enableDeduplication: z.boolean().default(false),
   cacheDriveLetter: z.string()
     .length(1, 'Cache drive letter must be a single character.')
-    .regex(/^[A-Z]$/, 'Cache drive letter must be an uppercase letter (A-Z).')
+    .regex(/^[A-Z]$/i, 'Cache drive letter must be an uppercase letter (A-Z).') // Allow lowercase input but AI prompt assumes uppercase
     .describe('Single uppercase drive letter (e.g., C)'),
   capacityDriveLetter: z.string()
     .length(1, 'Capacity drive letter must be a single character.')
-    .regex(/^[A-Z]$/, 'Capacity drive letter must be an uppercase letter (A-Z).')
+    .regex(/^[A-Z]$/i, 'Capacity drive letter must be an uppercase letter (A-Z).') // Allow lowercase input but AI prompt assumes uppercase
     .describe('Single uppercase drive letter (e.g., D)'),
+  rebootAfterCompletion: z.boolean().default(false).describe('Whether to reboot nodes after successful script completion.'),
 });
 
 export type S2DConfigFormData = z.infer<typeof S2DConfigSchema>;

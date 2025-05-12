@@ -48,8 +48,20 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
       enableDeduplication: false,
       cacheDriveLetter: 'C',
       capacityDriveLetter: 'D',
+      rebootAfterCompletion: false, // Default value for the new checkbox
     },
   });
+
+   const handleFormSubmit = (data: S2DConfigFormData) => {
+    // Ensure drive letters are uppercase before submitting
+    const processedData = {
+      ...data,
+      cacheDriveLetter: data.cacheDriveLetter.toUpperCase(),
+      capacityDriveLetter: data.capacityDriveLetter.toUpperCase(),
+    };
+    onSubmit(processedData);
+  };
+
 
   return (
     <Card className="shadow-lg">
@@ -58,7 +70,8 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+            {/* Network and Cluster Basics */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -116,16 +129,17 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
               />
             </div>
 
-            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Storage Tier 1</h3>
+            {/* Storage Tier 1 */}
+            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Storage Tier 1 (e.g., Cache/Performance)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={form.control}
                 name="storageTier1Name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Tier Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="PerformanceTier" {...field} />
+                      <Input placeholder="Performance" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,6 +162,7 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                         <SelectItem value="HDD">HDD</SelectItem>
                       </SelectContent>
                     </Select>
+                     <FormDescription>Typically SSD for performance.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -161,22 +176,24 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                     <FormControl>
                       <Input placeholder="Mirror" {...field} />
                     </FormControl>
+                     <FormDescription>e.g., Mirror</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Storage Tier 2</h3>
+             {/* Storage Tier 2 */}
+            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Storage Tier 2 (e.g., Capacity)</h3>
              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormField
                 control={form.control}
                 name="storageTier2Name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Tier Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="CapacityTier" {...field} />
+                      <Input placeholder="Capacity" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -199,6 +216,7 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                         <SelectItem value="HDD">HDD</SelectItem>
                       </SelectContent>
                     </Select>
+                     <FormDescription>Typically HDD for capacity.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -212,13 +230,15 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                     <FormControl>
                       <Input placeholder="Parity" {...field} />
                     </FormControl>
+                     <FormDescription>e.g., Parity, Mirror</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            
-            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Other Settings</h3>
+
+             {/* Drive Letters & Other Settings */}
+            <h3 className="text-lg font-semibold pt-4 border-t mt-6">Drive Letters & Other Settings</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -227,9 +247,9 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                   <FormItem>
                     <FormLabel>Cache Drive Letter</FormLabel>
                     <FormControl>
-                      <Input placeholder="C" {...field} maxLength={1} />
+                      <Input placeholder="C" {...field} maxLength={1} style={{ textTransform: 'uppercase' }} />
                     </FormControl>
-                    <FormDescription>Assign to Cache tier (e.g., C).</FormDescription>
+                    <FormDescription>Assign to Tier 1 volume (e.g., C).</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -241,9 +261,9 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                   <FormItem>
                     <FormLabel>Capacity Drive Letter</FormLabel>
                     <FormControl>
-                      <Input placeholder="D" {...field} maxLength={1} />
+                      <Input placeholder="D" {...field} maxLength={1} style={{ textTransform: 'uppercase' }} />
                     </FormControl>
-                    <FormDescription>Assign to Capacity tier (e.g., D).</FormDescription>
+                    <FormDescription>Assign to Tier 2 volume (e.g., D).</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -252,7 +272,7 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                 control={form.control}
                 name="enableDeduplication"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 md:col-span-2">
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 ">
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -262,9 +282,32 @@ export function S2DConfigForm({ onSubmit, isLoading }: S2DConfigFormProps) {
                     <div className="space-y-1 leading-none">
                       <FormLabel>Enable Data Deduplication</FormLabel>
                       <FormDescription>
-                        Enable data deduplication on the storage tiers.
+                        Enable data deduplication on the created volumes.
                       </FormDescription>
                     </div>
+                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="rebootAfterCompletion"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        id="rebootAfterCompletion"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel htmlFor="rebootAfterCompletion">Reboot Nodes After Completion</FormLabel>
+                      <FormDescription>
+                        Automatically reboot all storage nodes if the script finishes successfully.
+                      </FormDescription>
+                    </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
